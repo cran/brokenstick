@@ -1,0 +1,89 @@
+---
+title: "Getting started"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## What is the broken stick model?
+
+The *broken stick model* describes a set of individual curves by a linear mixed model using second-order linear B-splines. The model can be used to
+
+- smooth growth curves by a series of connected straight lines;
+- align irregularly observed curves to a common age grid;
+- create synthetic curves at a user-specified set of break ages;
+- estimate the time-to-time correlation matrix;
+- predict future observations.
+
+The user specifies a set of break ages at which the straight lines connect. Each individual obtains an estimate at each break age, so the set of estimates of the individual form a smoothed version of the observed trajectory. 
+
+## What are the main model assumptions?
+
+The main assumptions of the broken stick model are: 
+
+- The development between the break ages follows a straight line;
+- Broken stick estimates follow a common multivariate normal distribution;
+
+In order to conform to the assumption of multivariate normality, the user may fit the broken stick model on suitably transformed data that yield the standard normal ($Z$) scale. 
+
+## Why should I want to use the broken stick model?
+
+Three unique features of the broken stick model are:
+
+- *Modular*: Issues related to nonlinearities of the growth curves in the observed scale can be treated separately, i.e., outside the broken stick model;
+- *Local*: A given data point will contribute only to the estimates corresponding to the closest break ages;
+- *Exportable*: The broken stick model can be exported and reused for prediction for new data in alternative computing environments.
+
+## What is in the package?
+
+The `brokenstick` package contains functions to fit, predict and plot data. See the [reference page](https://growthcharts.org/brokenstick/reference/index.html) for an overview.
+
+## Acknowledgement
+
+Development of the `brokenstick` package was kindly supported by the *Healthy Birth Growth and Development knowledge integration* (HBGDki) program of the Bill & Melinda Gates Foundation.
+
+## Further reading
+
+* [Main functions](mainfunctions.html)
+    + Plot trajectories
+    + Orginal scale and $Z$-score scale
+    + 1-line model
+    + 2-line broken stick model
+    + 9-line broken stick model
+    + Prediction
+    + Subject-level analysis
+
+* [Broken Stick Model for Irregular Longitudinal Data](brokenstick-article.html)
+    + Irregular observation times
+    + Literature overview
+    + Definition of the model
+    + Interpretation of the model
+    + Estimation by `lmer` and `kr` methods
+    + Software overview
+    + `brokenstick()` for model fitting
+    + `predict()` for trajectory plotting
+    + Conversion back and forth to the $Z$-score scale
+    + Predict growth curve of new subjects
+    + Assess the quality of the model
+    + Knot placement strategies
+    + Critical periods
+    + Time-to-time correlations
+    + Profile analysis
+    + Curve interpolation
+    + Multiple imputation
+    + Curve matching
+    + Discussion
+
+* [Perfect model](perfectmodel.html)
+    + Properties of the perfect model
+    + Estimating time-to-time correlations
+
+* [Help for old friends](oldfriends.html)
+    + Properties of the perfect model
+    + Estimating time-to-time correlations
+
+
+

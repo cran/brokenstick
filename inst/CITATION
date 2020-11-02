@@ -1,0 +1,15 @@
+citHeader("To cite brokenstick in publications use:")
+
+bibentry(
+  bibtype      = "Misc",
+  title        = "Broken Stick Model for Irregular Longitudinal Data",
+  author       = personList(person("Stef", "van Buuren")),
+  journal      = "Journal of Statistical Software",
+  year         = "In preparation",
+  url          = "https://github.com/growthcharts/brokenstick")
+
+  textVersion  =
+  paste("Stef van Buuren (2020)",
+        "Broken Stick Model for Irregular Longitudinal Data",
+        "Journal of Statistical Software", "In preparation",
+        "https://github.com/growthcharts/brokenstick.", sep = ", ")
