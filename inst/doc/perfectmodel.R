@@ -30,7 +30,7 @@ covar <- matrix(c(1, 0.7, 0.5, 0.3,
                   0.3, 0.5, 0.6, 1), nrow = 4)
 gen_dat <- make_data_generator(n = 10000, 
                                ranef_covar = covar,
-                               resid_var = 1)
+                               resid_var = 2)
 data <- gen_dat()
 head(data)
 
@@ -41,27 +41,28 @@ d <- as_tibble(data[,-3])
 broad <- t(spread(d, subject, X1))[-1,]
 cor(broad)
 
-## ----eval=FALSE---------------------------------------------------------------
-#  library("brokenstick")
-#  knots <- 1:3
-#  boundary <- c(1, 4)
-#  fit <- brokenstick(X1 ~ age | subject, data,
-#                     knots = knots, boundary = boundary)
-#  omega <- fit$omega
-#  beta <- fit$beta
-#  sigma2 <- fit$sigma2
-#  round(beta, 2)
-#  round(sigma2, 4)
-#  
-#  # correlation random effects
-#  round(covar, 3)
-#  round(omega, 2)
-#  
-#  # covariances measured data
-#  round(omega + diag(sigma2, 4), 3)
-#  round(cov(broad), 3)
-#  
-#  # convert to time-to-time correlation matrix
-#  round(cov2cor(omega + diag(sigma2, 4)), 3)
-#  round(cor(broad), 3)
+## -----------------------------------------------------------------------------
+library("brokenstick")
+knots <- 1:3
+boundary <- c(1, 4)
+fit <- brokenstick(X1 ~ age | subject, data, 
+                   knots = knots, boundary = boundary,
+                   method = "lmer")
+omega <- fit$omega
+beta <- fit$beta
+sigma2 <- fit$sigma2
+round(beta, 2)
+round(sigma2, 4)
+
+# correlation random effects
+round(covar, 3)
+round(omega, 2)
+
+# covariances measured data
+round(omega + diag(sigma2, 4), 3)
+round(cov(broad), 3)
+
+# convert to time-to-time correlation matrix
+round(cov2cor(omega + diag(sigma2, 4)), 3)
+round(cor(broad), 3)
 

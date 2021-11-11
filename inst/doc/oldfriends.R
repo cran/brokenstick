@@ -4,49 +4,41 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----setup--------------------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 library(brokenstick)
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  library(devtools)
-#  install_github("growthcharts/brokenstick@V0.62.1")
+#  install_github("growthcharts/brokenstick@9b969af")
 
-## ----fit-old, eval=FALSE------------------------------------------------------
+## ----fit-v1, eval = FALSE-----------------------------------------------------
 #  data <- brokenstick::smocc_200
-#  fit <- brokenstick(y = data$hgt.z, x = data$age, subjid = data$subjid)
+#  
+#  # formula interface
+#  fit1 <- brokenstick(hgt_z ~ age | id, data)
+#  
+#  # XY interface - numeric vector
+#  # Deprecated in v2.0.0
+#  fit2 <- with(data, brokenstick(age, hgt_z, id))
+#  
+#  # XY interface - data.frame
+#  # Deprecated in v2.0.0
+#  fit3 <- with(data, brokenstick(data.frame(age), hgt_z, id))
+#  
+#  # XY interface - matrix
+#  # Deprecated in v2.0.0
+#  tt <- as.matrix(data[, c(1, 2, 7)])
+#  fit4 <- brokenstick(tt[, "age", drop = FALSE],
+#                      tt[, "hgt_z", drop = FALSE],
+#                      tt[, "id", drop = FALSE])
 
-## ----fit-new------------------------------------------------------------------
+## ----fit-v2-------------------------------------------------------------------
 data <- brokenstick::smocc_200
 
 # formula interface
-fit1 <- brokenstick(hgt.z ~ age | id, data)
+fit1 <- brokenstick(hgt_z ~ age | id, data)
 
-# XY interface - numeric vector
-fit2 <- with(data, brokenstick(age, hgt.z, id))
-
-# XY interface - data.frame
-fit3 <- with(data, brokenstick(data.frame(age), hgt.z, id))
-
-# XY interface - matrix
-tt <- as.matrix(data[, c(1, 2, 7)])
-fit4 <- brokenstick(tt[, "age", drop = FALSE],
-                    tt[, "hgt.z", drop = FALSE],
-                    tt[, "id", drop = FALSE])
-
-## ----predict-old, eval = FALSE------------------------------------------------
-#  # predict at observed data
-#  p1 <- predict(fit)
-#  
-#  # predict at knots
-#  p2 <- predict(fit, at = "knots")
-#  
-#  # predict at both observed data and knots
-#  p3 <- predict(fit, at = "both")
-#  
-#  # predict knots, broad version
-#  p4 <- predict(fit, at = "knots", output = "broad")
-
-## ----predict-new--------------------------------------------------------------
+## ----predict-v1---------------------------------------------------------------
 # predict at observed data
 p1 <- predict(fit1, data)
 
@@ -59,17 +51,24 @@ p3 <- predict(fit1, data, x = "knots", strip_data = FALSE)
 # predict knots, broad matrix
 p4 <- predict(fit1, data, x = "knots", shape = "wide")
 
-## ----plot-old, eval = FALSE---------------------------------------------------
-#  ids <- c(10001, 10005, 10022)
-#  plot(fit, ids = ids)
+## ----predict-v2---------------------------------------------------------------
+# predict at observed data
+p1 <- predict(fit1)
 
-## ----plot-new, fig.height=3, fig.width=7--------------------------------------
+# predict at knots
+p2 <- predict(fit1, x = "knots")
+
+# predict at both observed data and knots
+p3 <- predict(fit1, x = "knots", strip_data = FALSE)
+
+# predict knots, broad matrix
+p4 <- predict(fit1, x = "knots", shape = "wide")
+
+## ----plot-v1, fig.height=3, fig.width=7---------------------------------------
 ids <- c(10001, 10005, 10022)
 plot(fit1, data, group = ids, what = "all")
 
-## ----explain-old, eval=FALSE--------------------------------------------------
-#  get_pev(fit)
-
-## ----explain-new--------------------------------------------------------------
-get_r2(fit1, data)
+## ----plot-v2, fig.height=3, fig.width=7---------------------------------------
+ids <- c(10001, 10005, 10022)
+plot(fit1, group = ids, what = "all")
 
