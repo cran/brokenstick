@@ -4,9 +4,9 @@ knitr::opts_chunk$set(echo = TRUE,
                       dev = "png")
 
 ## ----message = FALSE----------------------------------------------------------
-require(brokenstick)
-require(dplyr)
-library(ggplot2)
+require("brokenstick")
+require("dplyr")
+library("ggplot2")
 
 ## ----smocc_200----------------------------------------------------------------
 data <- brokenstick::smocc_200

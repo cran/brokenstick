@@ -15,8 +15,6 @@
 #' @section Elements:
 #' \describe{
 #'    \item{`call`}{Call that created the object}
-#'    \item{`formula`}{A formula with the model specification,
-#'    e.g. `formula(y ~ x | group)`}
 #'    \item{`names`}{A named list with three elements (`"x"`, `"y"`, `"g"`)
 #'    providing the variable name for time, outcome and subject, respectively.}
 #'    \item{`internal`}{Numeric vector of with internal knots.}
@@ -29,15 +27,16 @@
 #'    \item{`beta`}{Numeric vector with fixed effect estimates.}
 #'    \item{`omega`}{Numeric matrix with variance-covariance estimates of the
 #'    broken stick estimates.}
-#'    \item{`sigma2j`}{Numeric vector with estimates of the residual variance per
-#'    group. Only used by method `"kr"`.}
 #'    \item{`sigma2`}{Numeric scalar with the mean residual variance.}
 #'    \item{`sample`}{A numeric vector with descriptives of the training data.}
 #'    \item{`light`}{Should the returned object be lighter? If `light = TRUE`
 #'    the returned object will contain only the model settings and parameter
-#'    estimates and not store the `sample`, `data`, `imp` and `mod` elements.
+#'    estimates and not store the `sigma2j`, `sample`, `data`, `imp` and
+#'    `mod` elements.
 #'    The light object can be used to predict broken stick estimates for
 #'    new data, but does not disclose the training data and is small.}
+#'    \item{`sigma2j`}{Numeric vector with estimates of the residual variance per
+#'    group. Only used by method `"kr"`.}
 #'    \item{`data`}{The training data used to fit the model.}
 #'    \item{`imp`}{The imputations generated for the missing outcome data. Only
 #'    for `method = "kr"`.}
@@ -54,7 +53,6 @@
 NULL
 
 new_brokenstick <- function(call = match.call(),
-                            formula = formula(),
                             names = list(
                               x = character(),
                               y = character(),
@@ -76,7 +74,6 @@ new_brokenstick <- function(call = match.call(),
                             mod = list()) {
   result <- list(
     call = call,
-    formula = formula,
     names = names,
     internal = internal,
     boundary = boundary,
@@ -85,12 +82,12 @@ new_brokenstick <- function(call = match.call(),
     control = control,
     beta = beta,
     omega = omega,
-    sigma2j = sigma2j,
     sigma2 = sigma2,
     sample = sample,
     light = light
   )
   if (!light) {
+    result$sigma2j <- sigma2j
     result$data <- data
     result$imp <- imp
     result$mod <- mod

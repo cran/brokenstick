@@ -75,17 +75,18 @@
 #' made.
 #' @return
 #'
-#' If `shape == "long"` a long tibble of predictions. If `x`, `y` and `group`
-#' are not specified, the number of rows in the tibble is guaranteed to
-#' be the same as the number of rows in `newdata`.
+#' If `shape == "long"` a long `data.frame` of predictions. If `x`, `y` and `group`
+#' are not specified, the number of rows in the data frame is guaranteed to
+#' be the same as the number of rows in `newdata`. If
 #'
-#' If `shape == "wide"` a wide tibble of prediction, one record per group. Note
+#' If `shape == "wide"` a wide `data.frame` of predictions, one record per group. Note
 #' that this format could be inefficient, depending on the data.
 #'
 #' If `shape == "vector"` a vector of predicted values, of all x-values and groups.
 #'
 #' @examples
-#' library(dplyr)
+#' \dontrun{
+#' library("dplyr")
 #'
 #' # -- Data
 #'
@@ -107,9 +108,7 @@
 #' identical(nrow(train), nrow(pred))
 #'
 #' # Predict without newdata, not possible for light object
-#' \dontrun{
 #' predict(fit_light)
-#' }
 #'
 #' # Use test data
 #' pred <- predict(fit, newdata = test)
@@ -152,12 +151,8 @@
 #' # Case 3: Predict at observed age for subset of groups, training sample
 #' pred <- predict(fit, group = c(10001, 10005, 10022))
 #' head(pred, 3)
-#'
 #' # Case 3: Of course, we cannot do this for light objects
-#' \dontrun{
 #' pred_light <- predict(fit_light, group = c(10001, 10005, 10022))
-#' }
-#'
 #' # Case 3: We can use another sample. Note there is no child 999
 #' pred <- predict(fit, test, group = c(11045, 11120, 999))
 #' tail(pred, 3)
@@ -165,7 +160,6 @@
 #' # Case 3: Works also for a light object
 #' pred_light <- predict(fit_light, test, group = c(11045, 11120, 999))
 #' identical(pred, pred_light)
-#'
 #'
 #' # -- Case 4: x, -y, group
 #'
@@ -192,7 +186,6 @@
 #'   group = c(11045, 11120, 999)
 #' )
 #' identical(pred_light, pred)
-#'
 #'
 #' # -- Case 5: x, y, group
 #'
@@ -232,6 +225,7 @@
 #'   x = c(0.5, 0.9, 0.6, 0.9),
 #'   y = c(0, 0.5, 0.5, 0.6), group = c(11045, 11120, 899, 899)
 #' )
+#' }
 #' @rdname predict
 #' @export
 predict.brokenstick <- function(object, newdata = NULL,

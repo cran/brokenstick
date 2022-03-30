@@ -5,10 +5,10 @@ knitr::opts_chunk$set(
 )
 
 ## ----setup, include=FALSE-----------------------------------------------------
-library(brokenstick)
+library("brokenstick")
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  library(devtools)
+#  library("devtools")
 #  install_github("growthcharts/brokenstick@9b969af")
 
 ## ----fit-v1, eval = FALSE-----------------------------------------------------

@@ -115,6 +115,7 @@
 #' A object of class `brokenstick`.
 #'
 #' @examples
+#' \donttest{
 #' data <- smocc_200[1:1198, ]
 #'
 #' # using kr method, default
@@ -122,7 +123,7 @@
 #' plot(f1, data, n_plot = 9)
 #'
 #' # study sampling behaviour of the sigma2 parameter with coda
-#' library(coda)
+#' library("coda")
 #' plot(f1$mod$sigma2)
 #' acfplot(f1$mod$sigma2)
 #'
@@ -131,10 +132,9 @@
 #' plot(f2, data, n_plot = 9)
 #'
 #' # drill down into merMod object with standard diagnostics in lme4
-#' library(lme4)
 #' summary(f2$mod)
 #' plot(f2$mod)
-#' \donttest{
+#'
 #' # a model with more knots
 #' knots <- round(c(0, 1, 2, 3, 6, 9, 12, 15, 18, 24, 36) / 12, 4)
 #'
@@ -231,7 +231,6 @@ brokenstick_bridge <- function(formula, data, knots, boundary, k, degree,
 
   obj <- new_brokenstick(
     call = call,
-    formula = formula,
     names = names,
     internal = l$internal,
     boundary = l$boundary,
