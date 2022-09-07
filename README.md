@@ -8,7 +8,7 @@
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/brokenstick)](https://cran.r-project.org/package=brokenstick)
-[![](https://img.shields.io/badge/github%20version-2.1.0-orange.svg)](https://growthcharts.org/brokenstick/)
+[![](https://img.shields.io/badge/github%20version-2.3.0-orange.svg)](https://growthcharts.org/brokenstick/)
 
 <!-- badges: end -->
 
@@ -66,9 +66,8 @@ The main assumptions of the broken stick model are:
 
 In order to conform to the assumption of multivariate normality, the
 user may fit the broken stick model on suitably transformed data that
-yield the standard normal
-(![Z](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Z "Z"))
-scale. Unique feature of the broken stick model are:
+yield the standard normal ($Z$) scale. Unique feature of the broken
+stick model are:
 
 -   *Modular*: Issues related to non-linearity of the growth curves in
     the observed scale can be treated separately, i.e., outside the
@@ -88,21 +87,21 @@ The `brokenstick` package contains functions for
 
 ### Background
 
-1.  I took the name *broken stick* from [Ruppert, Wand, and
-    Carroll](#ref-ruppert2003) ([2003](#ref-ruppert2003)), page 59-61,
-    but it is actually much older.
-2.  As far as I know, [de Kroon et al.](#ref-dekroon2010)
-    ([2010](#ref-dekroon2010)) is the first publication that uses the
-    broken stick model without the intercept in a mixed modelling
-    context. See [The Terneuzen birth cohort: BMI changes between 2 and
-    6 years correlate strongest with adult
+1.  I took the name *broken stick* from Ruppert, Wand, and Carroll
+    ([2003](#ref-ruppert2003)), page 59-61, but it is actually much
+    older.
+2.  As far as I know, de Kroon et al. ([2010](#ref-dekroon2010)) is the
+    first publication that uses the broken stick model without the
+    intercept in a mixed modelling context. See [The Terneuzen birth
+    cohort: BMI changes between 2 and 6 years correlate strongest with
+    adult
     overweight](https://stefvanbuuren.name/publications/2010%20TBC%20Overweight%20-%20PLoS%20ONE.pdf).
 3.  The model was formally defined and extended in [Flexible Imputation
     of Missing Data (second
     edition)](https://stefvanbuuren.name/fimd/sec-rastering.html#sec:brokenstick).
-    See [van Buuren](#ref-vanbuuren2018) ([2018](#ref-vanbuuren2018)).
-4.  The evaluation by [Anderson et al.](#ref-anderson2019)
-    ([2019](#ref-anderson2019)) concluded:
+    See van Buuren ([2018](#ref-vanbuuren2018)).
+4.  The evaluation by Anderson et al. ([2019](#ref-anderson2019))
+    concluded:
 
 > > We recommend the use of the brokenstick model with standardised
 > > Z‐score data. Aside from the accuracy of the fit, another key
@@ -117,7 +116,6 @@ The `brokenstick` package contains functions for
     software;
 -   Paper in preparation: *Broken Stick Model for Irregular Longitudinal
     Data*:
-    [pdf](https://stefvanbuuren.name/publications/2021_brokenstick_JSS_manuscript.pdf),
     [html](https://growthcharts.org/brokenstick/articles/manual/manual.html).
 
 ### References

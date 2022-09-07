@@ -1,3 +1,27 @@
+# brokenstick 2.3.0
+
+- Replaces `what` argument in `get_knots()` to `whatknots`
+- Adds support for `whatknots` in `get_omega()`
+- Extends capabilities of `plot_trajectory()` with `shape` and `linetype` options
+- Adds an example to `plot.brokenstick()` on how to create a decent black and white figure of trajectories
+- Replaces `knots = 0:3` by `knots = 0:2` in examples
+- Updates the perfectmodel vignette
+
+# brokenstick 2.2.0
+
+## Major changes:
+
+1. Changes the default number of knots in `brokenstick()` to 5. The former default produced a solution without internal knots. The new default produces a generally more informative starting model when the user does not specify knots (using `knots = c(..., ...)`) or the number of knots (using `k = ...`).
+2. Replaces the `strip_data` argument in `predict()` by the a more intuitive `include_data` argument. By default, observed data are now included into the predictions, similar to `predict.lm()`.
+3. Turns error `Argument 'newdata' is required for a light brokenstick object.` of `brokenstick()` into a warning and returns `NULL`.
+4. Updates the vignette [Broken Stick Model for Irregular Longitudinal Data](https://growthcharts.org/brokenstick/articles/manual/manual.html) to sync with revision for JSS.
+
+## Minor changes:
+
+- Expression `predict(fit_200_light, x = "knots")` now produces warning message instead of crashing
+- Updates objects `fit_200` and `fit_200_light` to use automatic boundary (2.68y) instead of 3 yrs
+- Automatically sorts any user-specified values for knots in increasing order to evade problems with `predict()`
+
 # brokenstick 2.1.0
 
 ## Incorporate changes and updates required by JSS

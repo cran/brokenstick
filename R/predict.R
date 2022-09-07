@@ -23,25 +23,36 @@
 #'
 #' @param group A vector with group identifications
 #'
-#' @param strip_data A logical indicating whether the row with the
-#'  observed data from `newdata` should be stripped from the
-#'  return value. The default is `TRUE`. Set to `FALSE` to infer which data
-#'  points are extracted from `newdata`. Works best for `shape = "long"`.
-#'
 #' @param shape A string: `"long"` (default), `"wide"` or `"vector"`
 #' specifying the shape of the return value. Note that use of `"wide"`
 #' with many unique values in `x` creates an unwieldy, large
 #' and sparse matrix.
 #'
-#' @param what Which knots to predict when `x = "knots"`? See [get_knots()].
-#' The default, `NULL`, calculates all knots.
+#' @param include_data A logical indicating whether the observed data
+#'  from `object$data` and `newdata` should be included into the
+#'  return value. The default is `TRUE`. Use `include_data = FALSE` to
+#'  keep only added data points (e.g. knots or observed data specified
+#'  by `x` and `y`). Setting `include_data = FALSE` is useful in
+#'  combination with `shape = "wide"` to avoid the warning
+#'  `Values from '.pred' are not uniquely identified.` For convenience,
+#'  in the special case `x = "knots"` the function overwrites
+#'  `include_data` to `FALSE` to evade observed ages to show up in the
+#'  wide matrix.
+#'
+#' @param strip_data Deprecated. Use `include_data` instead.
+#'
+#' @inheritParams get_knots
 #'
 #' @details
 #'
-#' By default, `predict()` calculates predictions for every row in
+#' The function `predict()` calculates predictions for every row in
 #' `newdata`. If the user specifies no `newdata` argument, then the
-#' function searches `object` for the training data (which are only
-#' available if `object$light` is `FALSE`).
+#' function sets `newdata` equal to the training data (`object$data`
+#' if `object$light` is `FALSE`). For a light object without a
+#' `newdata` argument, the function throws the warning
+#' "Argument 'newdata' is required for a light brokenstick object." and
+#' returns `NULL`.
+#'
 #' It is possible to tailor the behaviour of `predict()` through the
 #' `x`, `y` and `group` arguments. What exactly happens depends on
 #' which of these arguments is specified:
@@ -74,30 +85,30 @@
 #' different from the training sample effectively new cases will be
 #' made.
 #' @return
-#'
 #' If `shape == "long"` a long `data.frame` of predictions. If `x`, `y` and `group`
 #' are not specified, the number of rows in the data frame is guaranteed to
-#' be the same as the number of rows in `newdata`. If
+#' be the same as the number of rows in `newdata`.
 #'
 #' If `shape == "wide"` a wide `data.frame` of predictions, one record per group. Note
-#' that this format could be inefficient, depending on the data.
+#' that this format could be inefficient if observations times vary between
+#' subjects.
 #'
 #' If `shape == "vector"` a vector of predicted values, of all x-values and groups.
 #'
+#' If the function finds no data, it throws a warnings and returns `NULL`.
 #' @examples
-#' \dontrun{
 #' library("dplyr")
 #'
 #' # -- Data
 #'
 #' train <- smocc_200[1:1198, ]
 #' test <- smocc_200[1199:1940, ]
-#'
+#' \dontrun{
 #' # -- Fit model
 #'
-#' fit <- brokenstick(hgt_z ~ age | id, data = train, knots = 0:3, seed = 1)
+#' fit <- brokenstick(hgt_z ~ age | id, data = train, knots = 0:2, seed = 1)
 #' fit_light <- brokenstick(hgt_z ~ age | id,
-#'   data = train, knots = 0:3,
+#'   data = train, knots = 0:2,
 #'   light = TRUE, seed = 1
 #' )
 #'
@@ -129,13 +140,15 @@
 #' head(z, 3)
 #'
 #' # Case 1: x as values, linearly interpolated, train sample (n = 124)
-#' z <- predict(fit, x = c(0.5, 1, 1.5), shape = "wide")
+#' z <- predict(fit, x = c(0.5, 1, 1.5), shape = "wide", include_data = FALSE)
 #' head(z, 3)
 #'
 #' # Case 1: x as values, linearly interpolated, test sample (n = 76)
-#' z <- predict(fit, test, x = c(0.5, 1, 1.5), shape = "wide")
+#' z <- predict(fit, test, x = c(0.5, 1, 1.5), shape = "wide", include_data = FALSE)
 #' head(z, 3)
 #'
+#' # Case 1: x, not possible for light object
+#' z <- predict(fit_light, x = "knots")
 #'
 #' # -- Case 2: x, y, -group
 #'
@@ -151,8 +164,10 @@
 #' # Case 3: Predict at observed age for subset of groups, training sample
 #' pred <- predict(fit, group = c(10001, 10005, 10022))
 #' head(pred, 3)
+#'
 #' # Case 3: Of course, we cannot do this for light objects
 #' pred_light <- predict(fit_light, group = c(10001, 10005, 10022))
+#'
 #' # Case 3: We can use another sample. Note there is no child 999
 #' pred <- predict(fit, test, group = c(11045, 11120, 999))
 #' tail(pred, 3)
@@ -164,27 +179,23 @@
 #' # -- Case 4: x, -y, group
 #'
 #' # Case 4: Predict at specified x, only in selected groups, train sample
-#' pred <- predict(fit, x = c(0.5, 1, 1.25), group = c(10001, 10005, 10022))
+#' pred <- predict(fit, x = c(0.5, 1, 1.25), group = c(10001, 10005, 10022),
+#'         include_data = FALSE)
 #' pred
 #'
-#' # Case 4: strip_data = FALSE provides access to the observed data
+#' # Case 4: Same, but include observed data and sort
 #' pred_all <- predict(fit,
-#'   x = c(0.5, 1, 1.25), group = c(10001, 10005, 10022),
-#'   strip_data = FALSE
-#' )
-#' pred_all %>%
-#'   dplyr::filter(id == 10001) %>%
-#'   dplyr::arrange(age)
+#'   x = c(0.5, 1, 1.25), group = c(10001, 10005, 10022)) %>%
+#'   dplyr::arrange(id, age)
 #'
 #' # Case 4: Applies also to test sample
-#' pred <- predict(fit, test, x = c(0.5, 1, 1.25), group = c(11045, 11120, 999))
+#' pred <- predict(fit, test, x = c(0.5, 1, 1.25), group = c(11045, 11120, 999),
+#'  include_data = FALSE)
 #' pred
 #'
 #' # Case 4: Works also with light object
-#' pred_light <- predict(fit_light, test,
-#'   x = c(0.5, 1, 1.25),
-#'   group = c(11045, 11120, 999)
-#' )
+#' pred_light <- predict(fit_light, test, x = c(0.5, 1, 1.25),
+#'   group = c(11045, 11120, 999), include_data = FALSE)
 #' identical(pred_light, pred)
 #'
 #' # -- Case 5: x, y, group
@@ -194,52 +205,69 @@
 #' # Note that novel child (not in train) 999 has one data point
 #' predict(fit,
 #'   x = c(0.9, 0.9, 0.9), y = c(1, 1, 1),
-#'   group = c(10001, 10005, 999)
-#' )
+#'   group = c(10001, 10005, 999), include_data = FALSE)
 #'
 #' # Case 5: Same, but now for test sample. Novel child 899 has two data points
 #' predict(fit, test,
 #'   x = c(0.5, 0.9, 0.6, 0.9),
-#'   y = c(0, 0.5, 0.5, 0.6), group = c(11045, 11120, 899, 899)
-#' )
+#'   y = c(0, 0.5, 0.5, 0.6), group = c(11045, 11120, 899, 899),
+#'   include_data = FALSE)
 #'
 #' # Case 5: Also works for light object
 #' predict(fit_light, test,
 #'   x = c(0.5, 0.9, 0.6, 0.9),
-#'   y = c(0, 0.5, 0.5, 0.6), group = c(11045, 11120, 899, 899)
-#' )
+#'   y = c(0, 0.5, 0.5, 0.6), group = c(11045, 11120, 899, 899),
+#'   include_data = FALSE)
 #'
 #'
 #' # -- Case 6: As Case 5, but without previous data
 #'
 #' # Case 6: Same call as last, but now without newdata = test
-#' # All children are de facto novel as they do not occur in the training sample.
+#' # All children are de facto novel as they do not occur in the training
+#' # or test samples.
 #' # Note: Predictions for 11045 and 11120 differ from prediction in Case 5.
 #' predict(fit,
 #'   x = c(0.5, 0.9, 0.6, 0.9),
-#'   y = c(0, 0.5, 0.5, 0.6), group = c(11045, 11120, 899, 899)
-#' )
+#'   y = c(0, 0.5, 0.5, 0.6), group = c(11045, 11120, 899, 899))
 #'
 #' # This also work for the light brokenstick object
 #' predict(fit_light,
 #'   x = c(0.5, 0.9, 0.6, 0.9),
-#'   y = c(0, 0.5, 0.5, 0.6), group = c(11045, 11120, 899, 899)
-#' )
+#'   y = c(0, 0.5, 0.5, 0.6), group = c(11045, 11120, 899, 899))
 #' }
 #' @rdname predict
 #' @export
 predict.brokenstick <- function(object, newdata = NULL,
                                 ...,
                                 x = NULL, y = NULL, group = NULL,
-                                strip_data = TRUE,
+                                whatknots = "all",
                                 shape = c("long", "wide", "vector"),
-                                what = NULL) {
+                                include_data = TRUE,
+                                strip_data = TRUE) {
   shape <- match.arg(shape)
+  if (!missing(strip_data)) {
+    warning("Argument 'strip_data' is deprecated; please use 'include_data' instead.",
+            call. = FALSE)
+    include_data <- !strip_data
+  }
+  rm(strip_data)
 
   # handle special case: x = "knots"
+  # convenience: overwrite include_data when wide
   if (length(x)) {
     if (!is.na(x[1L]) && x[1L] == "knots") {
-      x <- get_knots(object, what = what)
+      x <- get_knots(object, whatknots = whatknots)
+      if (shape == "wide") include_data <- FALSE
+    }
+  }
+
+  # check for light object
+  if (is.null(x) && is.null(y) ||
+      is.null(x) && !is.null(y) ||
+      !is.null(x) && is.null(y)) {
+    if (is.null(newdata) && object$light) {
+      warning("Argument 'newdata' is required for a light brokenstick object.", call. = FALSE)
+      return(NULL)
     }
   }
 
@@ -247,14 +275,10 @@ predict.brokenstick <- function(object, newdata = NULL,
   # if:
   # 1. the user did not specify y, x and group
   # 2. or, the user specified y but not x
-  # Note: Sets NULL newdata to internal data in object for non-light object
-  if ((is.null(x) && is.null(y) && is.null(group)) ||
-    is.null(x) && !is.null(y)) {
-    if (is.null(newdata) && object$light) {
-      stop("Argument 'newdata' is required for a light brokenstick object.", call. = FALSE)
-    }
+  # Note: Sets NULL newdata to training data in object for non-light object
+  if ((is.null(x) && is.null(y) && is.null(group)) || is.null(x) && !is.null(y)) {
     if (is.null(newdata) && !object$light) {
-      # use internal data
+      # use training data
       newdata <- object$data
       reset <- FALSE
     }
@@ -276,8 +300,8 @@ predict.brokenstick <- function(object, newdata = NULL,
   }
 
   if (is.null(x) && is.null(y) && !is.null(group)) {
-    # case 3: do not strip the data (else we won't see anything)
-    strip_data <- FALSE
+    # case 3: always include data (else we won't see anything)
+    include_data <- TRUE
   }
 
   x <- as.matrix(newdata[, object$names$x, drop = FALSE])
@@ -294,16 +318,16 @@ predict.brokenstick <- function(object, newdata = NULL,
     }
     if (shape == "wide") {
       return(bind_cols(newdata, p) %>%
-        pivot_wider(
-          id_cols = object$names$g,
-          names_from = object$names$x,
-          values_from = ".pred"
-        ))
+               pivot_wider(
+                 id_cols = object$names$g,
+                 names_from = object$names$x,
+                 values_from = ".pred"
+               ))
     }
   }
 
   ret <- bind_cols(newdata, p)
-  if (strip_data) {
+  if (!include_data) {
     ret <- filter(ret, .data[[".source"]] == "added")
   }
 
@@ -315,9 +339,9 @@ predict.brokenstick <- function(object, newdata = NULL,
   }
   if (shape == "wide") {
     return(pivot_wider(ret,
-      id_cols = object$names$g,
-      names_from = object$names$x,
-      values_from = ".pred"
+                       id_cols = object$names$g,
+                       names_from = object$names$x,
+                       values_from = ".pred"
     ))
   }
   stop("Internal error")
@@ -359,16 +383,16 @@ predict_brokenstick_numeric <- function(object, x, y, g) {
   y_s <- split(y, f = g)
 
   blup <- mapply(EB,
-    y = y_s,
-    X = X_s,
-    MoreArgs = list(model = object),
-    SIMPLIFY = TRUE
+                 y = y_s,
+                 X = X_s,
+                 MoreArgs = list(model = object),
+                 SIMPLIFY = TRUE
   )
   if (!length(blup)) {
     return(data.frame(.pred = rep(NA_real_, length(x))))
   }
 
-  xv <- get_knots(object, what = "all")
+  xv <- get_knots(object, whatknots = "all")
   if (object$degree == 0L) xv <- xv[-length(xv)]
   long1 <- data.frame(
     group = rep(colnames(blup), each = nrow(blup)),

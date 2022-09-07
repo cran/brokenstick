@@ -9,7 +9,7 @@ brokenstick(
   data,
   knots = NULL,
   boundary = NULL,
-  k = NULL,
+  k = 5L,
   degree = 1L,
   method = c("kr", "lmer"),
   control = set_control(method = method, ...),
@@ -30,7 +30,8 @@ is allowed in each model term (additional variables will be ignored).}
 predictor (numeric) and group (numeric, factor, character) variable.}
 
 \item{knots}{Optional, but recommended. Numerical vector with the
-locations of the internal knots to be placed on the values of the predictor.}
+locations of the internal knots to be placed on the values of the predictor.
+The function sorts the internal knots in increasing order.}
 
 \item{boundary}{Optional, but recommended. Numerical vector of
 length 2 with the left and right boundary knot. The \code{boundary}
@@ -45,7 +46,10 @@ at equidense quantiles of the predictor. For example,
 specifying \code{k = 1} puts a knot at the 50th quantile (median),
 setting \code{k = 3} puts knots at the 25th, 50th and 75th quantiles,
 and so on. If the user specifies both \code{k} and \code{knots} arguments
-then \code{knots} takes precedence.}
+then \code{knots} takes precedence. The default is \code{k = 5}, so if the user
+does not specify any of \code{knots}, \code{boundary} or \code{k}, then the knots
+will be at the 16th, 33th, 50th, 66th and 84th quantile of the
+predictor.}
 
 \item{degree}{the degree of the spline. The broken stick model
 requires linear splines, so the default is \code{degree = 1}.
@@ -139,7 +143,7 @@ to other  data sets. Fixing the model requires specifying both \code{knots} and
 data <- smocc_200[1:1198, ]
 
 # using kr method, default
-f1 <- brokenstick(hgt_z ~ age | id, data, knots = 0:3, seed = 123)
+f1 <- brokenstick(hgt_z ~ age | id, data, knots = 0:2, seed = 123)
 plot(f1, data, n_plot = 9)
 
 # study sampling behaviour of the sigma2 parameter with coda
@@ -148,7 +152,7 @@ plot(f1$mod$sigma2)
 acfplot(f1$mod$sigma2)
 
 # using lmer method
-f2 <- brokenstick(hgt_z ~ age | id, data, knots = 0:3, method = "lmer")
+f2 <- brokenstick(hgt_z ~ age | id, data, knots = 0:2, method = "lmer")
 plot(f2, data, n_plot = 9)
 
 # drill down into merMod object with standard diagnostics in lme4

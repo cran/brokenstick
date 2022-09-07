@@ -23,6 +23,8 @@ make_data_generator <- function(resid_var = 1,
 }
 
 ## -----------------------------------------------------------------------------
+resid_var <- 0
+resid_var <- 1
 set.seed(77711)
 covar <- matrix(c(1, 0.7, 0.5, 0.3,
                   0.7, 1, 0.8, 0.5,
@@ -30,7 +32,7 @@ covar <- matrix(c(1, 0.7, 0.5, 0.3,
                   0.3, 0.5, 0.6, 1), nrow = 4)
 gen_dat <- make_data_generator(n = 10000, 
                                ranef_covar = covar,
-                               resid_var = 2)
+                               resid_var = resid_var)
 data <- gen_dat()
 head(data)
 
@@ -65,4 +67,17 @@ round(cov(broad), 3)
 # convert to time-to-time correlation matrix
 round(cov2cor(omega + diag(sigma2, 4)), 3)
 round(cor(broad), 3)
+
+z <- predict(fit, x = "knots", include_data = FALSE, shape = "wide")[, -1]
+# off-diagonal elements of covariance of broken stick estimates approach correlation
+# not enough variance in the diagonal because of smoothing
+cov(z)
+# correlations of broken stick estimates are inflated because of smoothing
+cor(z)
+
+## -----------------------------------------------------------------------------
+cov <- get_omega(fit)
+chat <- cov + diag(fit$sigma2, nrow(cov))
+r <- cov2cor(chat)
+r
 

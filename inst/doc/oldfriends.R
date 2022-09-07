@@ -38,37 +38,37 @@ data <- brokenstick::smocc_200
 # formula interface
 fit1 <- brokenstick(hgt_z ~ age | id, data)
 
-## ----predict-v1---------------------------------------------------------------
-# predict at observed data
-p1 <- predict(fit1, data)
-
-# predict at knots
-p2 <- predict(fit1, data, x = "knots")
-
-# predict at both observed data and knots
-p3 <- predict(fit1, data, x = "knots", strip_data = FALSE)
-
-# predict knots, broad matrix
-p4 <- predict(fit1, data, x = "knots", shape = "wide")
+## ----predict-v1, eval = FALSE-------------------------------------------------
+#  # predict at observed data
+#  p1 <- predict(fit1, data)
+#  
+#  # predict at knots
+#  p2 <- predict(fit1, data, x = "knots")
+#  
+#  # predict at both observed data and knots
+#  p3 <- predict(fit1, data, x = "knots", strip_data = FALSE)
+#  
+#  # predict knots, broad matrix
+#  p4 <- predict(fit1, data, x = "knots", shape = "wide")
 
 ## ----predict-v2---------------------------------------------------------------
 # predict at observed data
 p1 <- predict(fit1)
 
 # predict at knots
-p2 <- predict(fit1, x = "knots")
+p2 <- predict(fit1, x = "knots", include_data = FALSE)
 
 # predict at both observed data and knots
-p3 <- predict(fit1, x = "knots", strip_data = FALSE)
+p3 <- predict(fit1, x = "knots")
 
 # predict knots, broad matrix
 p4 <- predict(fit1, x = "knots", shape = "wide")
 
 ## ----plot-v1, fig.height=3, fig.width=7---------------------------------------
 ids <- c(10001, 10005, 10022)
-plot(fit1, data, group = ids, what = "all")
+plot(fit1, data, group = ids, whatknots = "all")
 
 ## ----plot-v2, fig.height=3, fig.width=7---------------------------------------
 ids <- c(10001, 10005, 10022)
-plot(fit1, group = ids, what = "all")
+plot(fit1, group = ids, whatknots = "all")
 
