@@ -1,43 +1,133 @@
 #' Obtain the knots from a broken stick model
 #'
 #' @param object An object of class \code{brokenstick}
-#' @param whatknots A character vector of length 1 specifies the knot set.
-#' Valid values are \code{"all"}, \code{"internal"}, \code{"boundary"},
-#' \code{"dropfirst"} and \code{"droplast"}. The default is
-#' \code{whatknots = "all"}
-#' @param what Deprecated. Use `whatknots` instead.
+#' @param whatknots Deprecated. Use `hide` instead.
+#' @param what Deprecated. Use `hide` instead.
+#' @inheritParams brokenstick
 #' @return A vector with knot locations, either both, internal only or
-#' boundary only. The result is \code{NULL} if \code{object} does not
+#' boundary only, depending on `hide`.
+#' The result is \code{NULL} if \code{object} does not
 #' have proper class. Returns \code{numeric(0)} if
 #' there are no internal knots.
 #' @examples
-#' get_knots(fit_200, "internal")
+#' get_knots(fit_200, hide = "bo")
 #' @export
 get_knots <- function(object,
-                      whatknots = c("all", "internal", "boundary", "dropfirst", "droplast"),
+                      hide = c("right", "left", "boundary", "internal", "none"),
+                      whatknots = "all",
                       what = "all") {
+
   stopifnot(inherits(object, c("brokenstick")))
-  if (!missing(what)) {
-    warning("argument what is deprecated; please use whatknots instead.",
+
+  if (!missing(what) || !missing(whatknots)) {
+    warning("arguments 'what' and 'whatknots' in 'get_knots()' are deprecated; please use 'hide' instead.",
             call. = FALSE)
     whatknots <- what
+    object$hide <- switch(whatknots,
+                          all = "none",
+                          internal = "boundary",
+                          boundary = "internal",
+                          dropfirst = "left",
+                          droplast = "right",
+                          "right")
   }
-  whatknots <- match.arg(whatknots)
+
+  if (!missing(hide)) {
+    hide <- match.arg(hide)
+  } else {
+    hide <- ifelse(is.null(object$hide), "right", object$hide)
+  }
+
   internal <- object$internal
   # legacy for objects created before v2.0
   if (is.null(internal)) internal <- object$knots
   boundary <- object$boundary
   internal <- internal[internal > boundary[1L] & internal < boundary[2L]]
 
-  result <- switch(whatknots,
-                   all = c(boundary[1L], internal, boundary[2L]),
-                   internal = internal,
-                   boundary = boundary,
-                   dropfirst = c(internal, boundary[2L]),
-                   droplast = c(boundary[1L], internal)
-  )
+  result <- switch(hide,
+                   none = c(boundary[1L], internal, boundary[2L]),
+                   internal = boundary,
+                   boundary = internal,
+                   left = c(internal, boundary[2L]),
+                   right = c(boundary[1L], internal))
   return(result)
 }
+
+#' Extract Variance and Correlation Components
+#'
+#' Extracts variance-covariance or correlation matrix from a
+#' `brokenstick` object.
+#'
+#' @param x      Object of class `brokenstick`
+#' @param cor    Logical. Should the function return the correlation matrix
+#' instead of the covariance matrix? The default is `FALSE`.
+#' @param what  Deprecated.
+#' @param whatknots Deprecated.
+#' @inheritParams brokenstick
+#' @return A numeric matrix, possibly with zero rows and columns if no names match
+#' @examples
+#' f1 <- brokenstick(hgt_z ~ age | id, smocc_200[1:1000, ], knots = 0:2, seed = 1)
+#' get_omega(f1, cor = TRUE, hide = "boundary")
+#' @export
+get_omega <- function(x,
+                      hide = c("right", "left", "boundary", "internal", "none"),
+                      cor = FALSE,
+                      whatknots = "all",
+                      what = "cov") {
+  stopifnot(inherits(x, "brokenstick"))
+
+  if (!missing(what)) {
+    warning("argument 'what' in 'get_omega()' is deprecated; please use 'cor' instead.",
+            call. = FALSE)
+    if (missing(cor)) {
+      cor <- ifelse(what == "cor", TRUE, FALSE)
+    }
+  }
+
+  if (!missing(whatknots)) {
+    warning("argument 'whatknots' in 'get_omega()' is deprecated; please use 'hide' instead.",
+            call. = FALSE)
+    whatknots <- what
+    x$hide <- switch(whatknots,
+                     all = "none",
+                     internal = "boundary",
+                     boundary = "internal",
+                     dropfirst = "left",
+                     droplast = "right",
+                     "right")
+  }
+
+  if (!missing(hide)) {
+    hide <- match.arg(hide)
+  } else {
+    hide <- ifelse(is.null(x$hide), "right", x$hide)
+  }
+
+  omega <- x$omega
+  v <- colnames(omega)
+  nameset <- switch(hide,
+                    none = v,
+                    boundary = v[c(-1L, -length(v))],
+                    internal = v[c(1L, length(v))],
+                    left = v[-1L],
+                    right = v[-length(v)])
+  if (length(nameset)) {
+    omega <- omega[nameset, nameset, drop = FALSE]
+  } else {
+    omega <- matrix(NA_real_, 0L, 0L)
+  }
+
+  # return correlation matrix if requested
+  if (cor) {
+    if (dim(omega)[1L]) {
+      return(cov2cor(omega))
+    }
+  }
+
+  # covariance matrix
+  return(omega)
+}
+
 
 #' Obtain proportion of explained variance from a broken stick model
 #'
@@ -58,58 +148,6 @@ get_r2 <- function(object, newdata = NULL) {
   return(cor(nd[[".pred"]], nd[[object$names$y]])^2)
 }
 
-#' Extract Variance and Correlation Components
-#'
-#' Extracts variance-covariance or correlation matrix from a
-#' `brokenstick` object.
-#'
-#' @param x      Object of class `brokenstick`
-#' @param what   Either `"cov"` (default) for the covariance matrix,  or `"cor"`
-#'  for the correlation matrix.
-#' @param names  A vector of column names of. If not specified, the function
-#'  automatically drops the entries corresponding to the right boundary. Specify
-#'  `names = "all"` to prevent dropping.
-#' @inheritParams get_knots
-#' @return A numeric matrix, possibly with zero rows and columns if no names match
-#' @examples
-#' f1 <- brokenstick(hgt_z ~ age | id, smocc_200[1:1000, ], knots = 0:2, seed = 1)
-#' get_omega(f1, what = "cor", names = c("age_1", "age_2"))
-#' @export
-get_omega <- function(x,
-                      what = c("cov", "cor"),
-                      whatknots = c("all", "internal", "boundary", "dropfirst", "droplast"),
-                      names = NULL) {
-  stopifnot(inherits(x, "brokenstick"))
-  what <- match.arg(what)
-  whatknots <- match.arg(whatknots)
-
-  omega <- x$omega
-  v <- colnames(omega)
-  nameset <- switch(whatknots,
-                    all = v,
-                    internal = v[c(-1L, -length(v))],
-                    boundary = v[c(1L, length(v))],
-                    dropfirst = v[-1L],
-                    droplast = v[-length(v)])
-  if (!is.null(names)) {
-    nameset <- intersect(names, v)
-  }
-  if (length(names) == 1L && names == "all") {
-    nameset <- v
-  }
-  if (length(nameset)) {
-    omega <- omega[nameset, nameset, drop = FALSE]
-  } else {
-    omega <- matrix(NA_real_, 0L, 0L)
-  }
-  if (what == "cov") {
-    return(omega)
-  }
-  if (dim(omega)[1L]) {
-    return(cov2cor(omega))
-  }
-  return(omega)
-}
 
 get_newdata <- function(x, newdata) {
   # sets the newdata argument

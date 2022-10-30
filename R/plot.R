@@ -43,8 +43,8 @@ plot.brokenstick <- function(x,
   nms <- unname(unlist(x$names))
   if (!all(nms %in% colnames(newdata))) {
     stop("Variable(s) not found: ",
-      paste(nms[!nms %in% colnames(newdata)], collapse = ", "),
-      call. = FALSE
+         paste(nms[!nms %in% colnames(newdata)], collapse = ", "),
+         call. = FALSE
     )
   }
 
@@ -58,8 +58,7 @@ plot.brokenstick <- function(x,
 #' @inheritParams predict.brokenstick
 #' @param x An object of class `brokenstick`.
 #' @param newdata A `data.frame` or `matrix`
-#' @param whatknots Which knots to plot? See [get_knots()]. The default,
-#' `whatknots = "droplast"`, does not plot the right boundary knot.
+#' @param hide Character indicating which knots should
 #' @param .x The `x` argument of the [predict.brokenstick()] function.
 #' @param color_y A character vector with two elements specifying the symbol and line color of the measured data points
 #' @param size_y Dot size of measured data points
@@ -87,6 +86,7 @@ plot.brokenstick <- function(x,
 #' plots of the entire data set.
 #' @param scales Axis scaling, e.g. `"fixed"`, `"free"`, and so on
 #' @param theme Plotting theme
+#' @param whatknots Deprecated.
 #' @param \dots Extra arguments passed down to [predict.brokenstick()].
 #' @return An object of class \code{ggplot}
 #' @rdname plot_trajectory
@@ -94,7 +94,7 @@ plot.brokenstick <- function(x,
 #' @export
 plot_trajectory <- function(x,
                             newdata = NULL,
-                            whatknots = "droplast",
+                            hide = c("right", "left", "boundary", "internal", "none"),
                             .x = NULL,
                             group = NULL,
                             color_y = c(
@@ -122,16 +122,33 @@ plot_trajectory <- function(x,
                             n_plot = 3L,
                             scales = "fixed",
                             theme = ggplot2::theme_light(),
+                            whatknots = "droplast",
                             ...) {
   stopifnot(
     inherits(x, "brokenstick"),
     any(show)
   )
+  if (!missing(whatknots)) {
+    warning("argument 'whatknots' is deprecated; please use 'hide' instead.",
+            call. = FALSE)
+    x$hide <- switch(whatknots,
+                     droplast = "right",
+                     dropfirst = "left",
+                     internal = "boundary",
+                     all = "none",
+                     "none")
+  }
+  if (!missing(hide)) {
+    hide <- match.arg(hide)
+  } else {
+    hide <- ifelse(is.null(x$hide), "right", x$hide)
+  }
+
   newdata <- get_newdata(x, newdata)
   # calculate brokenstick predictions, long format
   if (show[2L] && missing(.x)) .x <- "knots"
   data <- predict(
-    object = x, newdata = newdata, whatknots = whatknots, ...,
+    object = x, newdata = newdata, hide = hide, ...,
     x = .x, group = group
   )
   if (ncol(data) == 1L) data <- bind_cols(.source = "data", newdata, data)
@@ -178,14 +195,14 @@ plot_trajectory <- function(x,
   if (!is.null(ylim)) {
     idx <- idx &
       ((data[[".source"]] == "data" &
-        data[[x$names$y]] >= ylim[1L] &
-        data[[x$names$y]] <= ylim[2L]) |
-        (data[[".source"]] == "added" &
-          data[[".pred"]] >= ylim[1L] &
-          data[[".pred"]] <= ylim[2L]) |
-        (data[[".source"]] == "imputed" &
           data[[x$names$y]] >= ylim[1L] &
-          data[[x$names$y]] <= ylim[2L]))
+          data[[x$names$y]] <= ylim[2L]) |
+         (data[[".source"]] == "added" &
+            data[[".pred"]] >= ylim[1L] &
+            data[[".pred"]] <= ylim[2L]) |
+         (data[[".source"]] == "imputed" &
+            data[[x$names$y]] >= ylim[1L] &
+            data[[x$names$y]] <= ylim[2L]))
   }
 
   # safety measure, restrict to first n_plot cases if no groups are specified
@@ -217,11 +234,11 @@ plot_trajectory <- function(x,
   if (any(k)) {
     g <- g +
       ggplot2::geom_line(ggplot2::aes_string(group = ".imp"),
-        data = data[k, ], color = color_imp[2L]
+                         data = data[k, ], color = color_imp[2L]
       ) +
-      ggplot2::geom_point(ggplot2::aes_string(y = "hgt_z"),
-        data = data[k, ], color = color_imp[1L],
-        size = size_imp
+      ggplot2::geom_point(ggplot2::aes_string(y = x$names$y),
+                          data = data[k, ], color = color_imp[1L],
+                          size = size_imp
       )
   }
 
@@ -240,16 +257,16 @@ plot_trajectory <- function(x,
   if (any(k)) {
     if (x$degree == 0L) {
       g <- g + ggplot2::geom_step(ggplot2::aes_string(y = ".pred"),
-        data = data[k, ], color = color_yhat[2L], linetype = linetype_yhat
+                                  data = data[k, ], color = color_yhat[2L], linetype = linetype_yhat
       )
     } else {
       g <- g +
         ggplot2::geom_line(ggplot2::aes_string(y = ".pred"),
-          data = data[k, ], color = color_yhat[2L], linetype = linetype_yhat
+                           data = data[k, ], color = color_yhat[2L], linetype = linetype_yhat
         ) +
         ggplot2::geom_point(ggplot2::aes_string(y = ".pred"),
-          data = data[k, ], color = color_yhat[1L],
-          size = size_yhat, shape = shape_yhat
+                            data = data[k, ], color = color_yhat[1L],
+                            size = size_yhat, shape = shape_yhat
         )
     }
   }
@@ -257,8 +274,8 @@ plot_trajectory <- function(x,
   # split out according to subjid
   g <- g +
     ggplot2::facet_wrap(as.formula(paste("~", x$names$g)),
-      ncol = ncol,
-      scales = scales
+                        ncol = ncol,
+                        scales = scales
     ) +
     theme
 

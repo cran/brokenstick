@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE,
                       dev = "png")
 ```
 
-```{css echo = FALSE}
+```{css css, echo = FALSE, include = FALSE, eval = FALSE}
 img {
   border: 0px;
   padding: 10px;
@@ -31,7 +31,7 @@ This vignette demonstrates three major functions in the `brokenstick` package: `
 ```{r message = FALSE, warning = FALSE}
 require("brokenstick")
 require("dplyr")
-library("ggplot2")
+require("ggplot2")
 ```
 
 For more elaborate documentation, visit <https://growthcharts.org/brokenstick/articles/manual/manual.html>.
@@ -168,7 +168,7 @@ Note there are also knots at ages 0.00 and 2.68 years. These are boundary knots,
 If we wish to obtain estimates at both the knots and the observed data use:
 
 ```{r}
-p3 <- predict(fit2, x = "knots")
+p3 <- predict(fit2, x = "knots", hide = "none")
 table(p3$.source)
 ```
 

@@ -1,7 +1,7 @@
 Package: brokenstick
 Type: Package
 Title: Broken Stick Model for Irregular Longitudinal Data
-Version: 2.3.0
+Version: 2.4.0
 Authors@R: person("Stef", "van Buuren", email = "stef.vanbuuren@tno.nl", role = c("aut","cre"))
 Description: Data on multiple individuals through time are often sampled at times that differ between persons. Irregular observation times can severely complicate the statistical analysis of the data. The broken stick model approximates each subject’s trajectory by one or more connected line segments. The times at which segments connect (breakpoints) are identical for all subjects and under control of the user. A well-fitting broken stick model effectively transforms individual measurements made at irregular times into regular trajectories with common observation times.
     Specification of the model requires just three variables: time, measurement and subject. The model is a special case of the linear mixed model, with time as a linear B-spline and subject as the grouping factor. The main assumptions are: subjects are exchangeable, trajectories between consecutive breakpoints are straight, random effects follow a multivariate normal distribution, and unobserved data are missing at random.
@@ -19,9 +19,10 @@ Encoding: UTF-8
 License: MIT + file LICENSE
 LazyData: TRUE
 VignetteBuilder: knitr
+RoxygenNote: 7.2.1
 NeedsCompilation: no
-Packaged: 2022-09-07 18:41:23 UTC; buurensv
+Packaged: 2022-10-30 15:45:26 UTC; buurensv
 Author: Stef van Buuren [aut, cre]
 Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
 Repository: CRAN
-Date/Publication: 2022-09-07 22:23:04 UTC
+Date/Publication: 2022-10-30 16:20:15 UTC

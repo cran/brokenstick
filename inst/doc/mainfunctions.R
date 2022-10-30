@@ -7,7 +7,7 @@ knitr::opts_chunk$set(echo = TRUE,
 ## ----message = FALSE, warning = FALSE-----------------------------------------
 require("brokenstick")
 require("dplyr")
-library("ggplot2")
+require("ggplot2")
 
 ## ----smocc_200----------------------------------------------------------------
 data <- brokenstick::smocc_200
@@ -73,7 +73,7 @@ head(p2)
 nrow(p2)
 
 ## -----------------------------------------------------------------------------
-p3 <- predict(fit2, x = "knots")
+p3 <- predict(fit2, x = "knots", hide = "none")
 table(p3$.source)
 
 ## -----------------------------------------------------------------------------

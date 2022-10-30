@@ -398,13 +398,13 @@ perfectly.</p>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                               <span class="at">resid_var =</span> resid_var)</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">gen_dat</span>()</span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data)</span></code></pre></div>
-<pre><code>##   subject age .n          X1
-## 1       1   1  1 -0.94777697
-## 2       1   2  1 -2.08372706
-## 3       1   3  1 -2.65116213
-## 4       1   4  1 -2.55255194
-## 5       2   1  2 -0.08250395
-## 6       2   2  2 -1.27072650</code></pre>
+<pre><code>##   subject age .n      X1
+## 1       1   1  1 -0.9478
+## 2       1   2  1 -2.0837
+## 3       1   3  1 -2.6512
+## 4       1   4  1 -2.5526
+## 5       2   1  2 -0.0825
+## 6       2   2  2 -1.2707</code></pre>
 <p>We wish to reproduce the correlation matrix among the <span class="math inline">\(y\)</span>’s from the mixed model estimates. The
 <strong>target correlation matrix</strong> is:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidyr&quot;</span>)</span>
@@ -412,11 +412,11 @@ perfectly.</p>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(data[,<span class="sc">-</span><span class="dv">3</span>])</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>broad <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">spread</span>(d, subject, X1))[<span class="sc">-</span><span class="dv">1</span>,]</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(broad)</span></code></pre></div>
-<pre><code>##           [,1]      [,2]      [,3]      [,4]
-## [1,] 1.0000000 0.3497654 0.2550082 0.1611466
-## [2,] 0.3497654 1.0000000 0.4061576 0.2460109
-## [3,] 0.2550082 0.4061576 1.0000000 0.3127620
-## [4,] 0.1611466 0.2460109 0.3127620 1.0000000</code></pre>
+<pre><code>##       [,1]  [,2]  [,3]  [,4]
+## [1,] 1.000 0.350 0.255 0.161
+## [2,] 0.350 1.000 0.406 0.246
+## [3,] 0.255 0.406 1.000 0.313
+## [4,] 0.161 0.246 0.313 1.000</code></pre>
 </div>
 <div id="fit-model" class="section level2">
 <h2>Fit model</h2>
@@ -433,15 +433,15 @@ perfectly.</p>
 ## parameters and the residual variance (or scale parameter) are probably
 ## unidentifiable</code></pre>
 <pre><code>## Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, :
-## Model failed to converge with max|grad| = 0.00852341 (tol = 0.002, component 1)</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>omega <span class="ot">&lt;-</span> fit<span class="sc">$</span>omega</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> fit<span class="sc">$</span>beta</span>
+## Model failed to converge with max|grad| = 0.0323545 (tol = 0.002, component 1)</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>omega <span class="ot">&lt;-</span> <span class="fu">get_omega</span>(fit, <span class="at">hide =</span> <span class="st">&quot;no&quot;</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> <span class="fu">coef</span>(fit, <span class="at">hide =</span> <span class="st">&quot;no&quot;</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>sigma2 <span class="ot">&lt;-</span> fit<span class="sc">$</span>sigma2</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(beta, <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>## age_1 age_2 age_3 age_4 
 ## -0.02 -0.02  0.01  0.01</code></pre>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(sigma2, <span class="dv">4</span>)</span></code></pre></div>
-<pre><code>## [1] 0.8184</code></pre>
+<pre><code>## [1] 0.818</code></pre>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># correlation random effects</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(covar, <span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##      [,1] [,2] [,3] [,4]
@@ -485,18 +485,16 @@ perfectly.</p>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># off-diagonal elements of covariance of broken stick estimates approach correlation</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co"># not enough variance in the diagonal because of smoothing</span></span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cov</span>(z)</span></code></pre></div>
-<pre><code>##           1         2         3         4
-## 1 0.7951267 0.5945802 0.4745271 0.3057211
-## 2 0.5945802 0.7905218 0.6806088 0.4405806
-## 3 0.4745271 0.6806088 0.8212859 0.5362509
-## 4 0.3057211 0.4405806 0.5362509 0.7364388</code></pre>
+<pre><code>##       1     2     3
+## 1 0.795 0.595 0.475
+## 2 0.595 0.791 0.681
+## 3 0.475 0.681 0.821</code></pre>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># correlations of broken stick estimates are inflated because of smoothing</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(z)</span></code></pre></div>
-<pre><code>##           1         2         3         4
-## 1 1.0000000 0.7499553 0.5872130 0.3995204
-## 2 0.7499553 1.0000000 0.8446824 0.5774310
-## 3 0.5872130 0.8446824 1.0000000 0.6895290
-## 4 0.3995204 0.5774310 0.6895290 1.0000000</code></pre>
+<pre><code>##       1     2     3
+## 1 1.000 0.750 0.587
+## 2 0.750 1.000 0.845
+## 3 0.587 0.845 1.000</code></pre>
 </div>
 <div id="conclusions" class="section level2">
 <h2>Conclusions</h2>
@@ -516,11 +514,10 @@ matrix among the (unobserved) measurements at the knots:</li>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>chat <span class="ot">&lt;-</span> cov <span class="sc">+</span> <span class="fu">diag</span>(fit<span class="sc">$</span>sigma2, <span class="fu">nrow</span>(cov))</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">cov2cor</span>(chat)</span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>r</span></code></pre></div>
-<pre><code>##          age_1     age_2     age_3     age_4
-## age_1 1.000000 0.3497650 0.2550100 0.1611520
-## age_2 0.349765 1.0000000 0.4061597 0.2460114
-## age_3 0.255010 0.4061597 1.0000000 0.3127600
-## age_4 0.161152 0.2460114 0.3127600 1.0000000</code></pre>
+<pre><code>##       age_1 age_2 age_3
+## age_1 1.000 0.350 0.255
+## age_2 0.350 1.000 0.406
+## age_3 0.255 0.406 1.000</code></pre>
 </div>
 
 

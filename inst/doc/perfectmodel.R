@@ -1,4 +1,5 @@
 ## ----setup, include=FALSE-----------------------------------------------------
+old <- options(digits = 3)
 knitr::opts_chunk$set(echo = TRUE)
 
 ## -----------------------------------------------------------------------------
@@ -50,8 +51,8 @@ boundary <- c(1, 4)
 fit <- brokenstick(X1 ~ age | subject, data, 
                    knots = knots, boundary = boundary,
                    method = "lmer")
-omega <- fit$omega
-beta <- fit$beta
+omega <- get_omega(fit, hide = "no")
+beta <- coef(fit, hide = "no")
 sigma2 <- fit$sigma2
 round(beta, 2)
 round(sigma2, 4)
@@ -80,4 +81,7 @@ cov <- get_omega(fit)
 chat <- cov + diag(fit$sigma2, nrow(cov))
 r <- cov2cor(chat)
 r
+
+## ----echo = FALSE-------------------------------------------------------------
+options(old)
 
