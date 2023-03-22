@@ -1,3 +1,9 @@
+# brokenstick 2.5.0
+
+- Updates the manual vignette to conform to the accepted JSS manuscript (March 2023)
+- Updates the documentation for CRAN release
+- Adds the <doi:10.18637/jss.v106.i07> for the forthcoming JSS paper to DESCRIPTION and documentation
+
 # brokenstick 2.4.0
 
 ## Major changes:

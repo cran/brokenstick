@@ -52,5 +52,5 @@ plot(fit_200, group = gp, xlab = "Age (years)", ylab = "Length (SDS)",
 \link{predict.brokenstick}, \link{plot_trajectory}.
 }
 \author{
-Stef van Buuren 2021
+Stef van Buuren 2023
 }

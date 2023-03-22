@@ -43,5 +43,5 @@ Before version 0.54, it was standard practice that the \code{knots}
 array always included \code{boundary[1L]}.
 }
 \author{
-Stef van Buuren, 2020
+Stef van Buuren 2023
 }

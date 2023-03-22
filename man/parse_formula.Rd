@@ -19,5 +19,5 @@ formulas of \code{y ~ x | g}. It return the name of
 the first variable mentioned in each formula component.
 }
 \author{
-Stef van Buuren, 2020
+Stef van Buuren 2023
 }

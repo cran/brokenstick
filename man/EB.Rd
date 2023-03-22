@@ -38,5 +38,5 @@ Prediction in multilevel generalized linear models.
 J. R. Statist. Soc. A, 172, 3, 659-687.
 }
 \author{
-Stef van Buuren, 2015/2020
+Stef van Buuren 2023
 }
