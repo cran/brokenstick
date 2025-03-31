@@ -1,7 +1,7 @@
 Package: brokenstick
 Type: Package
 Title: Broken Stick Model for Irregular Longitudinal Data
-Version: 2.5.0
+Version: 2.6.0
 Authors@R: person("Stef", "van Buuren", email = "stef.vanbuuren@tno.nl", role = c("aut","cre"))
 Description: Data on multiple individuals through time are often sampled at 
     times that differ between persons. Irregular observation times can severely 
@@ -38,10 +38,10 @@ Encoding: UTF-8
 License: MIT + file LICENSE
 LazyData: TRUE
 VignetteBuilder: knitr
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2023-03-22 19:56:46 UTC; buurensv
+Packaged: 2025-03-28 14:47:54 UTC; buurensv
 Author: Stef van Buuren [aut, cre]
 Maintainer: Stef van Buuren <stef.vanbuuren@tno.nl>
 Repository: CRAN
-Date/Publication: 2023-03-22 23:00:06 UTC
+Date/Publication: 2025-03-31 05:40:02 UTC

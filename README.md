@@ -8,7 +8,7 @@
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/brokenstick)](https://cran.r-project.org/package=brokenstick)
-[![](https://img.shields.io/badge/github%20version-2.5.0-orange.svg)](https://growthcharts.org/brokenstick/)
+[![](https://img.shields.io/badge/github%20version-2.6.0-orange.svg)](https://growthcharts.org/brokenstick/)
 
 <!-- badges: end -->
 
@@ -111,11 +111,14 @@ The `brokenstick` package contains functions for
 
 ### Instructive materials
 
+- Publication: S. van Buuren (2023), Broken Stick Model for Irregular
+  Longitudinal Data. *Journal of Statistical Software*, 106(7), 1–51.
+  [doi:10.18637/jss.v106.i07](https://doi.org/10.18637/jss.v106.i07),
+  [html
+  version](https://growthcharts.org/brokenstick/articles/manual/manual.html);
 - [Companion site](https://growthcharts.org/brokenstick/) contains
   vignettes and articles that explain the model and the use of the
-  software;
-- Publication: [Broken Stick Model for Irregular Longitudinal
-  Data](doi:10.18637/jss.v106.i07) <doi:10.18637/jss.v106.i07>.
+  software.
 
 ### Acknowledgment
 
@@ -127,7 +130,8 @@ studies used in the present study.
 
 ### References
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
 
 <div id="ref-anderson2019" class="csl-entry">
 
@@ -157,7 +161,7 @@ Regression*. Cambridge: Cambridge University Press.
 <div id="ref-vanbuuren2018" class="csl-entry">
 
 van Buuren, S. 2018. *Flexible Imputation of Missing Data*. 2nd ed. Boca
-Raton, FL: CRC Press.
+Raton, FL: CRC Press. <https://stefvanbuuren.name/fimd/>.
 
 </div>
 

@@ -1,3 +1,10 @@
+# brokenstick 2.6.0
+
+- Updated the package documentation structure to conform to `royxgen2 7.3.2`
+- Fixed URL to FIMD book to prevent redirection
+- Added `robust_chol2inv()` to evade edge case on MKL Fedora 40
+- Outcommented two tests that gave inconsistent results across platforms
+
 # brokenstick 2.5.0
 
 - Updates the manual vignette to conform to the accepted JSS manuscript (March 2023)
